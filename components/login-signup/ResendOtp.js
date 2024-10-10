@@ -1,37 +1,19 @@
 import { Pressable, StyleSheet, Text, View } from "react-native"
 import { colors } from "../utills/colors"
-import { useEffect, useRef, useState } from "react"
-// import useApiCalls from "../apiComponents/useApiCalls"
+import React, { useEffect, useRef, useState } from "react"
+import useApiCalls from "../../api/useApiCalls"
 
-
-function ResendOtp({userPhoneNumber,endPoint,formKey}){
+function ResendOtp({phoneNo,endPoint,formKey,setIsLoading}){
 
     const [isresend,setReSend]=useState(false)
     const[sendmsg,setSendMsg]=useState('')
-
     const [count, setCount] = useState(60);  // Use state for count
 
-    // const {loading,apiError,apiCall,setApiError}=useApiCalls()
+    const {loading,apiError,apiCall,responseData}=useApiCalls()
 
-    const handlePhoneSubmit=async()=>{
-            // const formdata ={[formKey]:userPhoneNumber}
-            // const response=await apiCall(endPoint, formdata,token)
-
-            // if(response){
-              setSendMsg('OTP! send')
-              setCount(60);  // Reset the timer
-
-              // Start the countdown again
-              const timer = setInterval(() => {
-                  setCount(prev => {
-                      if (prev === 1) {
-                          clearInterval(timer);  // Stop the timer at 0
-                          setReSend(true);
-                      }
-                      return prev - 1;
-                  });
-              }, 1000);
-            // }
+    const handlePhoneSubmit=()=>{
+            const formdata ={[formKey]:phoneNo}
+            apiCall(endPoint, formdata)
     }
 
     const handleReSend=()=>{
@@ -44,6 +26,7 @@ function ResendOtp({userPhoneNumber,endPoint,formKey}){
         },60000)
         setReSend(false)
     }
+
     useEffect(()=>{
         setSendMsg('OTP! send')
         const timer = setInterval(() => {
@@ -64,19 +47,41 @@ function ResendOtp({userPhoneNumber,endPoint,formKey}){
         return()=>clearTimeout(initialTime)
     },[])
 
+    useEffect(()=>{
+        if(responseData){
+            setSendMsg('OTP! send')
+              setCount(60);  // Reset the timer
+
+              // Start the countdown again
+              const timer = setInterval(() => {
+                  setCount(prev => {
+                      if (prev === 1) {
+                          clearInterval(timer);  // Stop the timer at 0
+                          setReSend(true);
+                      }
+                      return prev - 1;
+                  });
+              }, 1000);
+        }
+    },[responseData])
+
+    useEffect(()=>{
+        setIsLoading(loading)
+    },[loading])
+
     return(
         <View>
+            {apiError && <Text style={styles.errorApi}>{apiError}</Text>}
             {sendmsg && <Text style={styles.time}>Time: {count}s</Text>}
             <Pressable onPress={isresend ? handleReSend : null} style={styles.resendCon}>
                 <Text style={[!isresend?styles.resend:styles.waitResend,styles.resendText]}>Resend code</Text>
             </Pressable>
               {sendmsg && <Text style={styles.sendmsgText}>{sendmsg}</Text>}
-              {/* {apiError && <Text style={styles.errorApi}>{apiError}</Text>} */}
         </View>
     )
 }
 
-export default ResendOtp
+export default React.memo(ResendOtp)
 
 const styles =StyleSheet.create({
     resendCon:{

@@ -1,8 +1,17 @@
 import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import FormHead from "../../components/login-signup/FormHead";
 import OtpInput from "../../components/login-signup/OtpInput";
+import { useState } from "react";
+import LoadingScreen from "../../components/utills/LoadingScreen";
 
-function ForgotOtp() {
+function ForgotOtp({route}) {
+
+    const phoneNo=route.params?.phoneNo
+    
+    const [isLoading,setIsLoading]=useState(false)
+
+    // console.log(phoneNo);
+    
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.mainCon}>
@@ -10,7 +19,10 @@ function ForgotOtp() {
                     <FormHead heading={'Enter Verification code'} externalStyles={styles.con}
                         text={'We have sent the verification code to your Phone number'} />
 
-                    <OtpInput />
+                    <OtpInput direction={'ChangePassScreen'} phoneNo={phoneNo} 
+                    endPoint={'api/verify-otp'} setIsLoading={setIsLoading} />
+
+                    {isLoading && <LoadingScreen/>}
                 </ScrollView>
             </View>
         </TouchableWithoutFeedback>

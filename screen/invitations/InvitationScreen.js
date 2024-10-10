@@ -21,7 +21,7 @@ function InvitationScreen(){
             </View>
 
             <View style={{flex:1}}>
-                <EventsFlatlist data={dummydata}/>
+                <EventsFlatlist data={dummydata} direction={'InvitationWishlist'}/>
             </View>
         </View>
     )

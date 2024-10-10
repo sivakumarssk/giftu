@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import { colors } from "../utills/colors";
 
-function FormHead ({heading,text,externalStyles}){
+function FormHead ({heading,text,externalStyles,headingStyles}){
     return (
         <View style={[styles.mainCon,externalStyles]}>
-            <Text style={styles.headText}>{heading}</Text>
+            {heading && <Text style={[styles.headText,headingStyles]}>{heading}</Text>}
             <Text style={styles.subText}>{text}</Text>
         </View>
     )

@@ -4,14 +4,49 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useRef, useState } from 'react';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import getWelcomeAsync from '../../components/storage/getWelcomeAsync';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateToken } from '../../redux/slice/TempData';
 
 SplashScreen.preventAutoHideAsync();
 
 function GiftyuSplashScreen({navigation}) {
-    const [appIsReady, setAppIsReady] = useState(false);
-
     const scaleAnim = useRef(new Animated.Value(0)).current;
+    const [appIsReady, setAppIsReady] = useState(false);
     const [image, setImage] = useState(false)
+    const [screenCheck,setScreenCheck] =useState({ welcome:'' , token:''})
+    const [welcome,setWelcome]=useState(null)
+
+    const dispatch=useDispatch()
+
+    // const  token =useSelector((state)=>state.tempData?.token)
+
+// console.log(token);
+
+
+
+
+    useEffect(()=>{
+
+        const welcomeScreenfun=async()=>{
+    
+            const value=await getWelcomeAsync('welcome')
+            // setWelcome(value)
+            setScreenCheck((prev)=>({...prev,welcome:value}))
+
+            const tokenValue=await getWelcomeAsync('token')
+
+            if(tokenValue){
+                dispatch(updateToken(tokenValue))
+                setScreenCheck((prev)=>({...prev,token:tokenValue}))
+            }
+            // console.log(tokenValue);
+        }
+  
+        
+        welcomeScreenfun()
+    },[])
+
 
 
     useEffect(() => {
@@ -44,6 +79,10 @@ function GiftyuSplashScreen({navigation}) {
         if(appIsReady){
 
         setTimeout(() => {
+            // const nav=screenCheck.welcome ? screenCheck.token ? 'HomeScreen':'Login':'OnBoardScreen1'
+            const nav= 'HomeScreen'
+            // console.log(nav, welcome);
+            
             setImage(true)
             // Start the animation  
             Animated.timing(scaleAnim, {
@@ -51,13 +90,13 @@ function GiftyuSplashScreen({navigation}) {
                 duration: 2000, // Animation duration (1 second)
                 useNativeDriver: true, // Use native driver for better performance
             }).start(()=>{
-                navigation.replace('OnBoardScreen1')
+                navigation.replace(nav)
                 // navigation.replace('Login')
             });
         }, 1900);
     }
 
-    }, [scaleAnim,appIsReady]);
+    }, [scaleAnim,appIsReady,welcome]);
 
     
   

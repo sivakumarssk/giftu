@@ -1,14 +1,20 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
+import { colors } from "../utills/colors";
 
 
-function CustomButton({color='white',background,externalStyles,replace,
-    children,direction,icon=false,externalTextStyles, button=true}){
+function CustomButton({color='white',background=colors.primary,externalStyles,replace,
+    children,direction,icon=false,externalTextStyles, button=true,externalFunction}){
 
      const navigation=useNavigation()
 
      const handleOnpress=()=>{
+        
+        if(externalFunction){
+            externalFunction()
+        }
+
         if(direction){
             navigation.navigate(direction)
         }

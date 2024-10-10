@@ -2,10 +2,16 @@ import { Dimensions, Image, ImageBackground, StyleSheet, Text, View } from "reac
 import PressableItem from "../utills/PressableItem";
 import CustomButton from "./CustomButton";
 import { colors } from "../utills/colors";
+import welcomeAsyncstorage from "../storage/welcomeAsyncstorage";
 
 
 function ContentComponent({ backgroundImage, logo = false, 
-    headText,descteption,navIndicator,direction,background,color,skipNav }) {
+    headText,descteption,navIndicator,direction,background,color,screenStatus }) {
+
+        const skipPress=()=>{
+            welcomeAsyncstorage('welcome',true)
+        }
+
     return (
         <View style={styles.onBoardContent}>
             <ImageBackground source={backgroundImage}
@@ -35,9 +41,10 @@ function ContentComponent({ backgroundImage, logo = false,
                 </View>
 
                 <View style={styles.buttonCon}>
-                    <PressableItem  skipNav={'Login'}>
+                    <PressableItem  skipNav={'Login'} externalFunction={skipPress}>
                         <Text style={styles.skip}>{logo ? 'skip' : ''}</Text></PressableItem>
                     <CustomButton background={background} color={color}
+                    externalFunction={screenStatus ? screenStatus:''}
                     replace={direction} icon={true} button={false}
                     externalTextStyles={styles.buttonTextExternal}
                     >Next</CustomButton>

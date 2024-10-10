@@ -1,9 +1,16 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
 import ContentComponent from "../../components/onboard/ContentComponent";
 import { colors } from "../../components/utills/colors";
+import welcomeAsyncstorage from "../../components/storage/welcomeAsyncstorage";
 
 
 function OnBoardScreen3(){
+
+
+    const screenStatus=()=>{
+        welcomeAsyncstorage('welcome',true)
+    }
+
     return(
         <View style={styles.onBoardCon3}>
             <ContentComponent
@@ -13,7 +20,8 @@ function OnBoardScreen3(){
             navIndicator={require('../../assets/onboard/indicator3.png')}
             direction={'Login'}
             background={colors.primary}
-            color={'white'}/>
+            color={'white'}
+            screenStatus={screenStatus}/>
         </View>
     )
 }

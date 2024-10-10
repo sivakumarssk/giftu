@@ -5,8 +5,9 @@ import { Ionicons } from "@expo/vector-icons"
 import { useState } from "react"
 
 
-function InputCom({ label,placeholder,maxLength,phone=false,
-    keyboardType,autoComplete,icon }) {
+function InputCom({ label,placeholder,maxLength,phone=false,onFocus,editable,multiline=false,
+    extrernalInput,
+    keyboardType,autoComplete,icon,value,onChangeText,onBlur,error,labelStyles=false }) {
 
         const [passwordVisible,setPasswordVisible]=useState(true)
 
@@ -19,26 +20,33 @@ function InputCom({ label,placeholder,maxLength,phone=false,
 
     return (
         <View style={styles.phoneInputMainCon}>
-            <Text style={styles.labelText}>{label}</Text>
+            <Text style={[styles.labelText,labelStyles?styles.label:'']}>{label}</Text>
             <View style={styles.inputCon}>
                 {phone && <>
                 <Text>+91</Text>
                 <View style={styles.line}></View>
                 </>}
-                <TextInput style={styles.phoneInput}
+                <TextInput style={[styles.phoneInput,extrernalInput]}
                 placeholder={placeholder}
                 maxLength={maxLength}
                 keyboardType={keyboardType}
                 secureTextEntry={icon?passwordVisible :false}
                 autoComplete={autoComplete}
+                value={value}
+                onChangeText={onChangeText}
+                onBlur={onBlur}
+                onFocus={onFocus}
+                editable={editable}
+                multiline={multiline}            
                 />
 
                 { icon && <PressableItem externalFunction={iconChange}>
-                    <Ionicons name={passwordVisible?'eye':"eye-off"} size={18} color={'grey'}/>
+                    <Ionicons name={!passwordVisible?"eye-off" :'eye'} size={18} color={'grey'}/>
                 </PressableItem>
                 }
 
             </View>
+            {error && <Text style={{color:'red'}}>{error}</Text>}
         </View>
     )
 }
@@ -48,13 +56,20 @@ export default InputCom
 const styles=StyleSheet.create({
     phoneInputMainCon:{
         // marginHorizontal:'5%',
-        gap:10,
+        // gap:10,
     },
     labelText:{
+        marginBottom:10,
         fontSize:14,
         fontWeight:'600',
         fontFamily:'Manrope-Medium',
         color:colors.formLable
+    },
+    label:{
+        fontSize:14,
+        fontWeight:'600',
+        fontFamily:'Manrope-Medium',
+        color:'black'
     },
     inputCon:{
         flexDirection:'row',

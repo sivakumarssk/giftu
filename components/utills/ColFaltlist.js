@@ -1,14 +1,15 @@
 import { FlatList, Image, Platform, StyleSheet, Text, View } from "react-native";
 import { colors } from "./colors";
+import PressableItem from "./PressableItem";
 
-function ColFaltlist({ renderData }) {
+function ColFaltlist({ renderData, edit = false, setPopUp,imageClickDir,externalFunction }) {
 
     if (renderData.length % 2 !== 0) {
         renderData.push({ id: 'placeholder', empty: true });
     }
 
     return (
-        <>
+        <View>
             <FlatList
                 data={renderData}
                 keyExtractor={(item) => item.id.toString()}
@@ -18,29 +19,66 @@ function ColFaltlist({ renderData }) {
                     }
                     return (
                         <View style={styles.flatMainCon}>
-                        <View
-                            style={[
-                                styles.item,
-                                itemData.item.isStatic ? styles.staticImage : styles.dynamicImage,
-                            ]}
-                        >
-                            {/* <View style={{width:'95%',height:'95%'}}> */}
-                                {itemData.item.isStatic ?
-                               <Image
-                                    source={itemData.item.Image}
-                                    resizeMode="center"
-                                    style={styles.flatImage}
-                                />
-                                :
-                                    <Image
-                                    source={itemData.item.Image}
-                                    resizeMode="stretch"
-                                    style={styles.flatImage}
-                                />}
+                            {itemData.item.purched ? 
+                                    (<View style={styles.gifCon}>
 
-                            {/* </View> */}
-                        </View>
-                        {itemData.item.tag && <Text style={styles.tagText}>{itemData.item.tag}</Text>}
+                                        <Image source={require('../../assets/wishlist/purchased.gif')}
+                                        resizeMode="stretch"
+                                        style={styles.gifImg}
+                                        />
+                                        
+                                        
+
+                                    </View>)
+                                    :
+                            (<View
+                                style={[
+                                    styles.item,
+                                    itemData.item.isStatic ? styles.staticImage : styles.dynamicImage,
+                                ]}
+                            >
+                                {/* <View style={{width:'95%',height:'95%'}}> */}
+                                {itemData.item.isStatic ?
+                                   ( <PressableItem
+                                       externalFunction={()=>setPopUp(true)}
+                                        extraStyles={styles.createCon}>
+
+                                        <Image
+                                            source={itemData.item.Image}
+                                            resizeMode="center"
+                                            style={styles.flatImage}
+                                        />
+                                    </PressableItem>)
+                                    :
+                                    
+                                    (<View style={styles.flatImageCon}>
+
+                                        {edit && <View style={styles.itemEditCon}>
+                                            <PressableItem route={{dir:'AddItemScreen',paraName:'edit', value:true}}>
+
+                                                <Image
+                                                    source={require('../../assets/wishlist/edititem.png')}
+                                                    // resizeMode="cover"
+                                                    style={styles.editImage}
+                                                />
+                                            </PressableItem>
+                                        </View>}
+
+                                        <PressableItem direction={imageClickDir} externalFunction={externalFunction}>
+
+                                            <Image
+                                                source={itemData.item.Image}
+                                                resizeMode="stretch"
+                                                style={styles.flatImage}
+                                            />
+                                        </PressableItem>
+                                    </View>)
+                                }
+
+                                {/* </View> */}
+                            </View>)
+                            }
+                            {itemData.item.tag && <Text style={styles.tagText}>{itemData.item.tag}</Text>}
                         </View>
                     );
                 }}
@@ -48,17 +86,18 @@ function ColFaltlist({ renderData }) {
                 showsVerticalScrollIndicator={false}
                 numColumns={2}
                 columnWrapperStyle={styles.columnWrapper}
+                ListFooterComponent={<View style={styles.footerSpace} />}
             />
-        </>
+        </View>
     )
 }
 
 export default ColFaltlist
 
 const styles = StyleSheet.create({
-    flatMainCon:{
+    flatMainCon: {
         flex: 1,
-        marginVertical: 10,
+        marginVertical: 8,
         marginHorizontal: '5%',
     },
     item: {
@@ -67,16 +106,16 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         // marginHorizontal:10,
         height: 150,
-        justifyContent:'center',
-        alignItems:'center'
+        justifyContent: 'center',
+        alignItems: 'center'
 
     },
     staticImage: {
-        borderWidth:3,
-        borderColor:colors.blue,
+        borderWidth: 3,
+        borderColor: colors.blue,
         borderRadius: 20,
-        elevation: 1,
-        backgroundColor:'white',
+        elevation: 2,
+        backgroundColor: 'white',
         shadowColor: 'black',
         shadowOpacity: 0.25,
         shadowRadius: 8,
@@ -85,9 +124,13 @@ const styles = StyleSheet.create({
         // width:120,
         // height:120
     },
-    plusText:{
-        fontSize:64,
-        color:colors.blue,
+    createCon: {
+        width: '100%',
+        height: '100%'
+    },
+    plusText: {
+        fontSize: 64,
+        color: colors.blue,
     },
     dynamicImage: {
         // borderWidth: 1,
@@ -102,6 +145,24 @@ const styles = StyleSheet.create({
         overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
         padding: 8
     },
+    flatImageCon: {
+        position: 'relative',
+        borderRadius: 10,
+        width: '100%',
+        height: '100%',
+    },
+    itemEditCon: {
+        position: 'absolute',
+        right: 0,
+        width: 30,
+        height: 30,
+        zIndex: 30,
+        overflow: 'hidden'
+    },
+    editImage: {
+        width: '100%',
+        height: '100%'
+    },
     flatImage: {
         borderRadius: 10,
         width: '100%',
@@ -109,13 +170,25 @@ const styles = StyleSheet.create({
     },
     placeholder: {
         backgroundColor: 'transparent',
+        marginRight: 35
     },
     columnWrapper: {
         justifyContent: 'space-between',
     },
-    tagText:{
-        fontSize:14,
-        fontWeight:'800',
-        textAlign:'center'
+    tagText: {
+        fontSize: 14,
+        fontWeight: '800',
+        textAlign: 'center'
+    },
+    footerSpace: {
+        marginBottom: 20
+    },
+    gifCon:{
+        width:145,
+        height: 145,
+    },
+    gifImg:{
+        width:'100%',
+        height:'100%'
     },
 });

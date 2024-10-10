@@ -2,13 +2,16 @@ import { StyleSheet, Text, View } from "react-native";
 import PressableItem from "./PressableItem";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "./colors";
+import { useNavigation } from "@react-navigation/native";
 
-function NavBack({ children, icon=true,direction }) {
+function NavBack({ children, icon=true,}) {
+
+  const navigation=useNavigation()
 
 
     return (
         <View>
-            <PressableItem direction={direction}>
+            <PressableItem externalFunction={()=>navigation.goBack()}>
                 <View style={styles.navCon}>
                    {icon && <Ionicons name="chevron-back-sharp" size={24} color={colors.nav} style={{marginTop:3}} />}
                     <Text style={styles.navText}>{children}</Text>

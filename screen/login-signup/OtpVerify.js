@@ -9,7 +9,7 @@ function OtpVerify() {
             <FormHead heading={'Enter Verification code'} externalStyles={styles.con}
             text={'We have sent the verification code to your Phone number'}/>
 
-            <OtpInput/>
+            <OtpInput direction={'HomeScreen'}/>
         </View>
         </TouchableWithoutFeedback>
     )

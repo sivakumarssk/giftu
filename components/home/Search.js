@@ -6,9 +6,9 @@ import PressableItem from "../utills/PressableItem";
 function Search({ direction,autoFocus=false }) {
     return (
         <View style={styles.searchCon}>
-            <PressableItem direction={direction}>
-            <TextInput placeholder="Search for popular event..."
-                    style={styles.searchInput}
+            <PressableItem direction={direction} extraStyles={styles.searchInput}>
+            <TextInput placeholder="Search here..."
+                    // style={styles.searchInput}
                     editable={!direction}
                     autoFocus={autoFocus}
                 />
@@ -40,6 +40,6 @@ const styles = StyleSheet.create({
     searchInput: {
         paddingVertical: 8,
         // backgroundColor:'yellow',
-        // width:'95%'
+        width:'90%'
     }
 })

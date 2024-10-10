@@ -1,34 +1,30 @@
 import { StyleSheet, Text, TextInput, View } from "react-native"
 import { useEffect, useRef, useState } from "react"
-// import ResendCode from "./ResendCode";
-// import useApiCalls from "../apiComponents/useApiCalls";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../utills/colors";
 import ResendOtp from "./ResendOtp";
-// import { UserContext } from "../../context/userContext";
+import useApiCalls from "../../api/useApiCalls";
 
-function OtpInput({ userPhoneNumber, setIsLoading, endPoint, direction }) {
+function OtpInput({ phoneNo, setIsLoading, endPoint, direction }) {
 
     // console.log(userPhoneNumber);
-    // const { updateToken } = useContext(UserContext)
-    // const { loading, apiError, setApiError, apiCall } = useApiCalls()
-
-
-
+    
     const navigation = useNavigation()
+    const { loading, apiError, setApiError, apiCall, responseData } = useApiCalls()
 
+    const [error,setError]=useState(false)
     const input1ref = useRef(null);
     const input2ref = useRef(null);
     const input3ref = useRef(null)
     const input4ref = useRef(null);
 
 
-    const [editableState, setEditableState] = useState({
-        input1: true,
-        input2: false,
-        input3: false,
-        input4: false,
-    });
+    // const [editableState, setEditableState] = useState({
+    //     input1: true,
+    //     input2: false,
+    //     input3: false,
+    //     input4: false,
+    // });
 
     const [inputValue, setInputValue] = useState({
         input1: '',
@@ -48,7 +44,8 @@ function OtpInput({ userPhoneNumber, setIsLoading, endPoint, direction }) {
     const refs = [input1ref, input2ref, input3ref, input4ref];
 
     const handleChange = (value, ref, ref2, inputname) => {
-        // setApiError(false)
+        setError(false)
+        setApiError(null)
 
         // Regular expression to allow only numbers
         const numberOnlyRegex = /^[0-9]*$/;
@@ -70,7 +67,6 @@ function OtpInput({ userPhoneNumber, setIsLoading, endPoint, direction }) {
             if (value.length === 0 && ref2.current) {
                 // ref2.current.focus();
                 setInputColor((prev) => ({ ...prev, [inputname]: 'green' }));
-
             }
         } else {
             // If the value is not a number, set the color to red and reset the value
@@ -99,7 +95,6 @@ function OtpInput({ userPhoneNumber, setIsLoading, endPoint, direction }) {
         }
         return null
     }
-
     // const handleFocus = () => {
 
     //     const emptyRef = getNextEmptyRef ();
@@ -122,13 +117,22 @@ function OtpInput({ userPhoneNumber, setIsLoading, endPoint, direction }) {
 
     const combinedString = `${inputValue.input1}${inputValue.input2}${inputValue.input3}${inputValue.input4}`;
     const handleSubmit = async () => {
-        // console.log('entered');
-        // const formdata = {
-        //     phone: userPhoneNumber,
-        //     otp: combinedString
+
+        // if (combinedString!=='1234'){
+        //     setError(true)
+        // }else {
+        //     navigation.reset({
+        //         index: 0,
+        //         routes: [{ name: direction }],
+        //     });
         // }
+        // console.log('entered');
+        const formdata = {
+            phone: phoneNo,
+            otp: combinedString
+        }
         // console.log(combinedString);
-        // const response = await apiCall(endPoint, formdata)
+         apiCall(endPoint, formdata)
 
         // if (response) {
         //     // console.log(response.token);
@@ -142,40 +146,69 @@ function OtpInput({ userPhoneNumber, setIsLoading, endPoint, direction }) {
         // }
     }
 
+    useEffect(()=>{
+        if(responseData){
+            // console.log(responseData);
+            
+            navigation.replace(direction,{
+             passwordToken:responseData.token
+            })
+        }
+    },[responseData])
+
+
     useEffect(() => {
         if (combinedString.length === 4) {
             handleSubmit();
         }
     }, [inputValue]);
 
-    // useEffect(() => {
-    //     setIsLoading(loading)
-    // }, [loading])
+    useEffect(() => {
+        setIsLoading(loading)
+    }, [loading])
 
 
-    // useEffect(() => {
-    //     if (apiError) {
-    //         setInputColor({
-    //             input1: 'red',
-    //             input2: 'red',
-    //             input3: 'red',
-    //             input4: 'red',
-    //         });
-    //     }else {
-    //         setInputColor({
-    //             input1: colors.phoneLine,
-    //             input2: colors.phoneLine,
-    //             input3: colors.phoneLine,
-    //             input4: colors.phoneLine,
-    //         })
-    //     }
-    // }, [apiError]);
+    useEffect(() => {
+        if (apiError) {
+            setInputColor({
+                input1: 'red',
+                input2: 'red',
+                input3: 'red',
+                input4: 'red',
+            });
+        }else {
+            setInputColor({
+                input1: colors.phoneLine,
+                input2: colors.phoneLine,
+                input3: colors.phoneLine,
+                input4: colors.phoneLine,
+            })
+        }
+    }, [apiError]);
+
+    useEffect(() => {
+        if (error) {
+            setInputColor({
+                input1: 'red',
+                input2: 'red',
+                input3: 'red',
+                input4: 'red',
+            });
+        }else {
+            setInputColor({
+                input1: colors.phoneLine,
+                input2: colors.phoneLine,
+                input3: colors.phoneLine,
+                input4: colors.phoneLine,
+            })
+        }
+    }, [error]);
 
     // console.log(inputColor.input1);
     return (
         <View style={styles.mainCon}>
             <View style={styles.apierrorCon}>
-                {/* <Text style={styles.apierrorText}>{apiError ? apiError : ''}</Text> */}
+                {apiError && <Text style={styles.apierrorText}>{apiError ? apiError : ''}</Text>}
             </View>
             <View style={styles.otpInnerCon}>
                 <TextInput
@@ -233,9 +266,8 @@ function OtpInput({ userPhoneNumber, setIsLoading, endPoint, direction }) {
                     autoComplete="sms-otp"
                 />
             </View>
-            <ResendOtp />
-            {/* <ResendCode userPhoneNumber={userPhoneNumber} endPoint={'api/send-otp'}
-                formKey={'phone'} /> */}
+            <ResendOtp phoneNo={phoneNo} endPoint={'api/forget-password'} setIsLoading={setIsLoading}
+            formKey={'phone'}/>
         </View>
     )
 }

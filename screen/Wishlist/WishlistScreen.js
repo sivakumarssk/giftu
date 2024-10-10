@@ -1,10 +1,14 @@
-import React from "react";
-import { FlatList, Image, Text, View, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { FlatList, Image, Text, View, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import NavBack from "../../components/utills/NavBack";
 import ColFaltlist from "../../components/utills/ColFaltlist";
+import WishlistName from "../../components/Wishlist/WishlistName";
 
 function WishlistScreen() {
-    const staticImage = { id: 0, Image: require('../../assets/wishlist/image.png'), 
+
+    const [popUp,setPopUp]=useState(false)
+
+    const staticImage = { id: 0, Image: require('../../assets/wishlist/create.png'), 
         link: '', isStatic: true,tag:'Create New Wish List' };
 
     const dummydata = [
@@ -17,15 +21,19 @@ function WishlistScreen() {
     let combinedData = [staticImage, ...dummydata];
 
     return (
+            // <TouchableWithoutFeedback onPress={Keyboard.dismiss()}>
         <View style={styles.wishlistMainCon}>
             <View style={styles.wishlistTextCon}>
                 <NavBack icon={false}>Wishlist</NavBack>
             </View>
 
             <View>
-                <ColFaltlist renderData={combinedData}/>
+                <ColFaltlist renderData={combinedData} setPopUp={setPopUp}
+                imageClickDir={'WishlistItemsScreen'}/>
             </View>
+            {popUp && <WishlistName setPopUp={setPopUp}/>}
         </View>
+        // </TouchableWithoutFeedback>
     );
 }
 

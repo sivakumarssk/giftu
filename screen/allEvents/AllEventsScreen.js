@@ -2,6 +2,7 @@ import { FlatList, ScrollView, SectionList, StyleSheet, Text, View } from "react
 import NavBack from "../../components/utills/NavBack";
 import { colors } from "../../components/utills/colors";
 import EventsFlatlist from "../../components/home/EventsFlatlist";
+import PressableItem from "../../components/utills/PressableItem";
 
 function AllEventsScreen(){
     const sections = [
@@ -19,7 +20,8 @@ function AllEventsScreen(){
             <View style={styles.sectionHeaderCon}>
             <Text style={styles.sectionHeader}>{item.title}</Text>
             </View>
-            <EventsFlatlist data={item.data} externalImgStyles={styles.imageStyles}/>
+            <EventsFlatlist data={item.data} externalImgStyles={styles.imageStyles}
+            direction={'EventDetails'}/>
         </View>
     );
 
@@ -32,17 +34,19 @@ function AllEventsScreen(){
                 <NavBack icon={false}>All Events</NavBack>
             </View>
 
+            <PressableItem direction={'CreateEventsScreen'}>
             <View style={styles.createEventsCon}>
                 <Text style={styles.createEventsText}>Create a New Event</Text>
                 <Text style={styles.createEventsText}>+</Text>
             </View>
+            </PressableItem>
 
             <FlatList
                 // sections={sections}
                 data={sections}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderSection}
-                contentContainerStyle={{ paddingBottom: 20 }}
+                // contentContainerStyle={{ paddingBottom: 20 }}
                 showsVerticalScrollIndicator={false}
             />
         </View>
@@ -76,7 +80,6 @@ const styles=StyleSheet.create({
         shadowOpacity:0.25,
         shadowRadius:8,
         shadowOffset:{width:0,height:2},
-
     },
     createEventsText:{
         fontSize:18,

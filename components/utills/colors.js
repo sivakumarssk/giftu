@@ -4,5 +4,6 @@ export const colors ={
     phoneLine:'#CDD1E0',
     tabBar:'#6F6F6F',
     nav:'#140301CC',
-    blue:'#5345E8'
+    blue:'#5345E8',
+    inputline:"#C6C6C6"
 }

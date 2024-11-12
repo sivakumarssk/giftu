@@ -5,49 +5,52 @@ import { colors } from "../../components/utills/colors";
 import ColFaltlist from "../../components/utills/ColFaltlist";
 import LoadingScreen from "../../components/utills/LoadingScreen";
 import WishlistName from "../../components/Wishlist/WishlistName";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PurchaseItem from "./PurchaseItem";
 
 function InvitationWishlist({route}) {
 
-    const wishListName=route.params?.wishListName    
+    const paramsinvitaion=route.params?.invitaion    
 
+    // console.log(paramsinvitaion);
+    
+    const [invitaion,setInvitaion]=useState(paramsinvitaion)
     const[popUp,setPopUp]=useState(false)
+    const [invitationId,setInvitationId] = useState('')
+    const [singleInvitation,setSingleInvitation] = useState('')
 
-    const dummydata = [
-        { id: 1, Image: require('../../assets/dummt/w1.jpeg'), purched:true,},
-        { id: 2, Image: require('../../assets/dummt/w2.jpeg'), link: 'https://www.google.com/', },
-        { id: 3, Image: require('../../assets/dummt/w3.jpeg'), link: 'https://www.google.com/',},
-        { id: 11, Image: require('../../assets/dummt/w1.jpeg'), link: 'https://www.google.com/',},
-        { id: 21, Image: require('../../assets/dummt/w2.jpeg'), link: 'https://www.google.com/', },
-        { id: 31, Image: require('../../assets/dummt/w3.jpeg'), link: 'https://www.google.com/',},
-        { id: 12, Image: require('../../assets/dummt/w1.jpeg'), link: 'https://www.google.com/',},
-        { id: 22, Image: require('../../assets/dummt/w2.jpeg'), link: 'https://www.google.com/', },
-        { id: 32, Image: require('../../assets/dummt/w3.jpeg'), link: 'https://www.google.com/',},
-        { id: 13, Image: require('../../assets/dummt/w1.jpeg'), link: 'https://www.google.com/',},
-        { id: 23, Image: require('../../assets/dummt/w2.jpeg'), link: 'https://www.google.com/', },
-        { id: 33, Image: require('../../assets/dummt/w3.jpeg'), link: 'https://www.google.com/',},
-    ];
+    // console.log(invitationId);
+
+    useEffect(()=>{
+        if(invitationId){
+            const singleInvitation = invitaion?.wishlist.find((each)=>each._id === invitationId)
+            setSingleInvitation(singleInvitation)
+        }
+    },[invitationId])
+    
 
     return (
         <View style={styles.wishitemsMainCon}>
             <View style={styles.wishitemsMain}>
 
-            <NavBack direction={'WishlistScreen'}>Wish List Items</NavBack>
+            <NavBack >Wish List Items</NavBack>
 
             <View style={styles.itemCon}>
                 <View style={styles.eventitemNameCon}>
-                    <Text style={styles.eventitemName}>{wishListName ? wishListName :'Birthday'}</Text>
+                    <Text style={styles.eventitemName} numberOfLines={1} ellipsizeMode="tail"
+                    >{ `${invitaion?.name} ${invitaion?.category}` }</Text>
                 </View>
             </View>
             </View>
 
             <View style={styles.itemlist}>
-                <ColFaltlist renderData={dummydata} externalFunction={()=>setPopUp(true)}/>
+                <ColFaltlist renderData={invitaion?.wishlist} isroute={true}
+                externalFunction={()=>setPopUp(true)} setInvitationId ={setInvitationId}/>
             </View>
 
             <View>
-                {popUp && <PurchaseItem setPopUp={setPopUp}/> }
+                {popUp && <PurchaseItem setPopUp={setPopUp} invitaion={invitaion}
+                 singleInvitation={singleInvitation} setInvitaion={setInvitaion}/> }
             </View>
 
         </View>
@@ -75,7 +78,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        maxWidth: '55%',
+        flexShrink:1,
+        // maxWidth: '55%',
         // overflow:'scroll' 
     },
     eventitemName: {

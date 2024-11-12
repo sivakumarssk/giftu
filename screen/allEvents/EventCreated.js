@@ -3,13 +3,28 @@ import { colors } from "../../components/utills/colors"
 import PressableItem from "../../components/utills/PressableItem"
 import { Ionicons } from "@expo/vector-icons"
 import CustomButton from "../../components/onboard/CustomButton"
+import useApiCalls from "../../api/useApiCalls"
 
-function EventCreated() {
+function EventCreated({route,navigation}) {
+
+    const userevent =route.params?.userevent
+
+    // console.log(userevent);
+
+    const { baseUrl } =useApiCalls()
+
+    const handleBtn=()=>{
+        navigation.replace('SendInviteScreen',{
+            eventId:userevent._id
+        })
+    }
+    
+
     return (
         <View style={styles.createdMain}>
 
             <View style={styles.gifboxCon}>
-                <Image source={require('../../assets/createEvents/sucessEvent.gif')}
+                <Image source={require('../../assets/access/sucessEvent.gif')}
                     style={styles.gifbox} />
             </View>
 
@@ -20,17 +35,32 @@ function EventCreated() {
             <View style={styles.eventCon}>
                 <View style={styles.eventSubCon}>
                         <PressableItem>
-                    <ImageBackground source={require('../../assets/createEvents/birthday.jpeg')} style={styles.eventImg}>
-                            <View style={styles.viewStyles}>
-                            <Text style={styles.text}>View Wishlist  {'>>'}</Text>
-                            </View>
+                    <ImageBackground source={{uri:`${baseUrl}${userevent?.image}`}} 
+                    resizeMode="stretch" style={styles.eventImg}>
                     </ImageBackground>
+                        </PressableItem>
+                </View>
+
+                <View style={styles.viewStyles}>
+                <View style={styles.nameTextCon}>
+                        <Text style={styles.eventName}  numberOfLines={1} ellipsizeMode="tail"
+                        >{userevent.category}</Text>
+                    </View>
+                            <PressableItem 
+                        externalFunction={()=>navigation.navigate('EventWishlistItemsScreen',{
+                            event:userevent,
+                            // wishlistName:userevent.wishlistName,
+                        })}>
+
+                            <Text style={styles.text}>View Wishlist  {'>>'}</Text>
                         </PressableItem>
                 </View>
             </View>
 
             <View style={styles.btnInvite}>
-                <CustomButton>Send Invite Message to Guest</CustomButton>
+                <CustomButton
+                externalFunction={handleBtn}
+                >Send Invite Message to Guest</CustomButton>
             </View>
 
         </View>
@@ -64,13 +94,9 @@ const styles = StyleSheet.create({
         color: colors.primary
     },
     eventCon: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    eventSubCon: {
         marginTop: 10,
-        width: '100%',
-        height: 170,
+        justifyContent: 'center',
+        // alignItems: 'center',
         borderRadius: 8,
         elevation: 4,
         shadowColor:'black',
@@ -80,15 +106,40 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         overflow: 'hidden'
     },
+    eventSubCon: {
+        width: '100%',
+        height: 170,
+        // borderRadius: 8,
+        // elevation: 4,
+        // shadowColor:'black',
+        // shadowOpacity:0.25,
+        // shadowRadius:8,
+        // shadowOffset:{width:0,height:2},
+        // backgroundColor: 'white',
+        // overflow: 'hidden'
+    },
     eventImg: {
         width: '100%',
         height: '100%',
     },
     viewStyles:{
-        marginHorizontal:'10%',
-        marginVertical:'15%',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        padding:10,
+        paddingBottom:15,
+        backgroundColor:'white'
         // justifyContent:'center',
         // alignItems:'center'
+    },
+    nameTextCon: {
+        flexShrink: 1,
+        marginRight:8,
+    },
+    eventName:{
+        fontSize:14,
+        fontWeight:'700',
+        color:'#424242',
+        fontFamily: 'Manrope-semiBold'
     },
     text:{
         fontSize:14,

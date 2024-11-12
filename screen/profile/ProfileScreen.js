@@ -2,22 +2,46 @@ import { Alert, ScrollView, StyleSheet, View } from "react-native"
 import NavBack from "../../components/utills/NavBack"
 import UserInfoHead from "../../components/profile/UserInfoHead"
 import ProfileMenu from "../../components/profile/ProfileMenu"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import PressableItem from "../../components/utills/PressableItem"
+import useApiCalls from "../../api/useApiCalls"
+import { useFocusEffect } from "@react-navigation/native"
+import ImagePick from "../../components/utills/ImagePick"
 
 function ProfileScreen({ navigation }) {
 
+    const { baseUrl, loading, apiError, apiCall } = useApiCalls()
+
     const [group, setGroup] = useState(false)
+
+    const [profile, setProfile] = useState({})
+
+    const handleName = async () => {
+        const response = await apiCall('get', 'getName')
+        if(response){
+            setProfile(response)
+        }
+    }
+
+
+    useFocusEffect(
+        useCallback(() => {
+            handleName();
+        }, [])
+    );
+
 
 
     const profileChange = [
-        { id: 0, img: require('../../assets/profile/editProfile.png'), title: 'Edit profile information', direction:'EditProfile' },
+        { id: 0, img: require('../../assets/profile/editProfile.png'), title: 'Edit profile information',externalFunction:()=>{
+            navigation.navigate('EditProfile',{profile:profile})
+        } },
         { id: 1, img: require('../../assets/profile/eye.png'), title: 'Change Password',direction:'ChangePassword' },
     ]
 
     const profileMenu = [
         { id: 0, img: require('../../assets/profile/subscription.png'), title: 'Subscription', direction: 'Subscription' },
-        { id: 1, img: require('../../assets/profile/history.png'), title: 'History of event', direction:'History' },
+        // { id: 1, img: require('../../assets/profile/history.png'), title: 'History of event', direction:'History' },
         { id: 2, img: require('../../assets/profile/contact.png'), title: 'Contact Us',direction:'ContactUs' },
         // { id: 3, img: require('../../assets/profile/faq.png'), title: 'FAQ' },
         { id: 4, img: require('../../assets/profile/privacy.png'), title: 'Privacy policy' },
@@ -31,12 +55,14 @@ function ProfileScreen({ navigation }) {
             ]) },
     ]
 
+ 
+
     return (
         <View style={styles.profileMainCon}>
             <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
                 <NavBack icon={false}>Profile</NavBack>
-                <UserInfoHead image={require('../../assets/dummt/profile.png')}
-                    name={'Siva Priya'} phoneNumber={'8877799988'}
+                <UserInfoHead image={profile?.image} profile={profile}
+                    name={profile?.userName} phoneNumber={profile?.phone}
                 />
 
                 {
@@ -45,7 +71,8 @@ function ProfileScreen({ navigation }) {
                             <View key={each.id}
                                 style={[styles.profileMenuCon]}>
                                 <ProfileMenu image={each.img} externalStyles={styles.menuExtraStyles}
-                                direction={each.direction}>
+                                direction={each.direction}
+                                externalFunction={each.externalFunction}>
                                     {each.title}</ProfileMenu>
                             </View>
                         )

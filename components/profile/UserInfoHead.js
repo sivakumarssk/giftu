@@ -1,18 +1,50 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../utills/colors";
+import ImagePick from "../utills/ImagePick";
+import { useEffect, useState } from "react";
+import useApiCalls from "../../api/useApiCalls";
 
-function UserInfoHead({ image, name, phoneNumber }) {
+function UserInfoHead({ image, name, phoneNumber,profile }) {
+
+    const {apiCall,apiError,loading,setApiError,baseUrl} =useApiCalls()
+
+    const[popCall,setPopCall]=useState(false)
+
+    const [profilePic,setProfilePic] =useState('')
+    const [error,setError] =useState('')
+
+    const handleChangPic =async ()=>{
+
+        const formdata =new FormData()
+
+        formdata.append('image',profilePic)
+
+        const response = await apiCall('patch',`profilePic/${profile._id}`, formdata)
+        
+        if(response){
+            // setProfilePic('')
+            setPopCall(false)
+        }
+    }
+
+    useEffect(()=>{
+        if(profilePic){
+            handleChangPic()
+        }
+    },[profilePic])
+
     return (
         <View style={styles.userInfo}>
             <View style={styles.editImageMainCon}>
                 <View style={styles.profileImgCon}>
-                    <Image source={image} style={styles.profileImg}
+                    <Image source={{uri: profilePic.uri || `${baseUrl}${image}`}} style={styles.profileImg}
                         resizeMode="cover" />
                 </View>
 
+                
 
                 <View style={styles.editIconMainCon}>
-                    <Pressable style={styles.editIconSubCon}>
+                    <Pressable style={styles.editIconSubCon} onPress={()=>setPopCall(true)}>
                         <Image source={require('../../assets/profile/editIcon.png')}
                             style={styles.editIcon} />
                     </Pressable>
@@ -23,6 +55,10 @@ function UserInfoHead({ image, name, phoneNumber }) {
                 <Text style={styles.nameText}>{name}</Text>
                 <Text style={styles.phoneText}>+91 {phoneNumber}</Text>
             </View>
+
+            {popCall && <ImagePick directCall={true} setError={setError}
+            setImage={setProfilePic} image={profilePic} error={error}
+            setPopCall={setPopCall} setApiError={setApiError}/>}
         </View>
     )
 }

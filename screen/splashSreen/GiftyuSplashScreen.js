@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import getWelcomeAsync from '../../components/storage/getWelcomeAsync';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateToken } from '../../redux/slice/TempData';
+import * as SecureStore from 'expo-secure-store'
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,7 +25,9 @@ function GiftyuSplashScreen({navigation}) {
 // console.log(token);
 
 
-
+const getToken = async(key) =>{
+    return await SecureStore.getItemAsync(key)
+ }
 
     useEffect(()=>{
 
@@ -34,13 +37,13 @@ function GiftyuSplashScreen({navigation}) {
             // setWelcome(value)
             setScreenCheck((prev)=>({...prev,welcome:value}))
 
-            const tokenValue=await getWelcomeAsync('token')
+            const tokenValue=await getToken('accessToken')
 
             if(tokenValue){
                 dispatch(updateToken(tokenValue))
                 setScreenCheck((prev)=>({...prev,token:tokenValue}))
             }
-            // console.log(tokenValue);
+            console.log(tokenValue);
         }
   
         
@@ -79,8 +82,8 @@ function GiftyuSplashScreen({navigation}) {
         if(appIsReady){
 
         setTimeout(() => {
-            // const nav=screenCheck.welcome ? screenCheck.token ? 'HomeScreen':'Login':'OnBoardScreen1'
-            const nav= 'HomeScreen'
+            const nav=screenCheck.welcome ? screenCheck.token ? 'HomeScreen':'Login':'OnBoardScreen1'
+            // const nav= 'HomeScreen'
             // console.log(nav, welcome);
             
             setImage(true)

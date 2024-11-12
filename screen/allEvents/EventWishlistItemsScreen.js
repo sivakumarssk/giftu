@@ -8,15 +8,16 @@ import WishlistName from "../../components/Wishlist/WishlistName";
 import { useState } from "react";
 import useApiCalls from "../../api/useApiCalls";
 
-function WishlistItemsScreen({route}) {
+function EventWishlistItemsScreen({route}) {
 
-    const wishlistitem=route.params?.wishlist
-    // const wishListName=route.params?.wishListName 
+    // const wishlistName=route.params?.wishlistName
+    const event = route.params?.event 
+    const wishlistitem= event?.wishlist
     
-    console.log(wishlistitem);
+    // console.log(event);
     
 
-    const [popUp,setPopUp]=useState(false)
+    // const { loading,apiError,baseUrl,apiCall,setApiError } = useApiCalls()
 
 
     return (
@@ -27,15 +28,15 @@ function WishlistItemsScreen({route}) {
 
             <View style={styles.itemCon}>
                 <View style={styles.eventitemNameCon}>
-                    <Text style={styles.eventitemName}>{wishlistitem?.name}</Text>
-                    <PressableItem externalFunction={()=>setPopUp(true)}>
+                    <Text style={styles.eventitemName}>{event?.wishlistName}</Text>
+                    {/* <PressableItem externalFunction={()=>setPopUp(true)}>
                         <Image source={require('../../assets/wishlist/editpen.png')}
                             style={styles.itemnameEditImage} />
-                    </PressableItem>
+                    </PressableItem> */}
                 </View>
 
                 <PressableItem 
-                 route={{dir:'AddItemScreen',paraName:'wishlist', value:wishlistitem}}>
+                 route={{dir:'AddItemScreen',paraName:'userevent', value:event}}>
                     <View style={styles.addItemCon}>
                         <Text style={styles.addItemText}>Add Item</Text>
                         <Image source={require('../../assets/wishlist/plus.png')}
@@ -46,17 +47,14 @@ function WishlistItemsScreen({route}) {
             </View>
 
             <View style={styles.itemlist}>
-                <ColFaltlist renderData={wishlistitem.items} edit={true} paraName={'wishlist'} exwishlist={wishlistitem}/>
+                <ColFaltlist renderData={wishlistitem} edit={true} paraName={'userevent'} exwishlist={event}/>
             </View>
-
-            {popUp && <WishlistName setPopUp={setPopUp} endPoint={'updateWishlist'}
-            update={true} upwishlist={wishlistitem}/>}
 
         </View>
     )
 }
 
-export default WishlistItemsScreen
+export default EventWishlistItemsScreen
 
 
 const styles = StyleSheet.create({

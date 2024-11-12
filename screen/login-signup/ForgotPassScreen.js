@@ -5,14 +5,13 @@ import CustomButton from "../../components/onboard/CustomButton";
 import { colors } from "../../components/utills/colors";
 import { useEffect, useState } from "react";
 import useApiCalls from "../../api/useApiCalls";
-import { useSelector } from "react-redux";
 import LoadingScreen from "../../components/utills/LoadingScreen";
 
-function ForgotPassScreen({navigation,route}) {
+function ForgotPassScreen({navigation}) {
 
     const [phoneNumber, setPhoneNumber] = useState(null)
     const [errors, setErrors] = useState(null)
-    const { loading, apiError, apiCall, setApiError, responseData } = useApiCalls()
+    const { loading, apiError, apiCall, setApiError } = useApiCalls()
 
     // const token =useSelector((state)=>state.tempData?.token)
 
@@ -50,22 +49,20 @@ function ForgotPassScreen({navigation,route}) {
         }
     }
 
-    useEffect(()=>{
-        if (responseData) {
-            // console.log(responseData);
-            navigation.navigate('ForgotOtp',{
-                phoneNo:phoneNumber
-            })
-        }
-    },[responseData])
 
 
-    const hanlesubmit =() => {
+    const hanlesubmit = async () => {
         if (validate()) {
             const formdata = {
                 phone: phoneNumber,
             };
-            apiCall('api/forget-password', formdata)
+            const response = await apiCall('post','genarateOtp', formdata)
+
+            if(response){
+                navigation.navigate('ForgotOtp',{
+                    phone:phoneNumber
+                })
+            }
         }
 
     }
@@ -91,10 +88,10 @@ function ForgotPassScreen({navigation,route}) {
                             error={errors}
                         />
 
-                        <CustomButton background={colors.primary} externalFunction={hanlesubmit}
+                        <CustomButton background={colors.primary}
+                         externalFunction={loading ? '' : hanlesubmit}
                         >Next</CustomButton>
                     </View>
-                    {loading && <LoadingScreen/>}
                 </ScrollView>
             </View>
         </TouchableWithoutFeedback>

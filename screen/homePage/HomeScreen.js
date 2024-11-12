@@ -6,15 +6,41 @@ import Search from "../../components/home/Search";
 import HomeCon from "../../components/home/HomeCon";
 import EventsFlatlist from "../../components/home/EventsFlatlist";
 import Coursole from "../../components/home/Coursole";
+import useApiCalls from "../../api/useApiCalls";
+import { useEffect, useState } from "react";
 
 function HomeScreen({ navigation }) {
 
-    const dummydata = [
-        { id: 1, Image: require('../../assets/createEvents/birthday.jpeg'), link: 'https://www.google.com/' },
-        { id: 2, Image: require('../../assets/home/eventslist/2.png'), link: 'https://www.google.com/' },
-        { id: 3, Image: require('../../assets/home/eventslist/3.png'), link: 'https://www.google.com/' },
-        { id: 4, Image: require('../../assets/home/eventslist/4.png'), link: 'https://www.google.com/' },
-    ]
+
+    const { baseUrl, loading, apiError, apiCall } = useApiCalls()
+
+    const [banners, setBanners] = useState({})
+    const [name, setName] = useState({})
+
+    const handleName = async () => {
+        const response = await apiCall('get', 'getName')
+        if(response){
+            setName(response)
+        }
+        // console.log(response,'rses');
+    }
+
+    const handleBanners = async () => {
+        const response = await apiCall('get', 'getBanners')
+        if(response){
+            setBanners(response)
+        }
+        // console.log(response,'rses');
+    }
+
+
+    useEffect(() => {
+        handleName()
+        handleBanners()
+    }, [])
+
+    // console.log(banners.events)
+    
 
     return (
         <View style={styles.homeMainCon}>
@@ -22,10 +48,10 @@ function HomeScreen({ navigation }) {
                 <View style={styles.logoCon}>
                     <Image source={require('../../assets/logo.png')}
                         style={styles.logoImage} />
-                    <Text style={styles.userName}>Hi Priya !</Text>
+                    <Text style={styles.userName}>{`${name?.userName} !`}</Text>
                 </View>
 
-                <PressableItem  direction={'NotifiCation'}>
+                <PressableItem direction={'NotifiCation'}>
                     <Ionicons name="notifications-outline" size={24} color="black" />
                 </PressableItem>
             </View>
@@ -35,16 +61,18 @@ function HomeScreen({ navigation }) {
             </View>
 
             <View style={styles.searCon}>
-                <Search direction={'SearchScreen'} />
+                <Search editable={false}
+                route={{dir:'SearchScreen',paraName:'data',value:banners.events}} 
+                />
             </View>
 
 
             <FlatList
                 data={[]}
                 renderItem={''}
-                keyExtractor={(item, index) => index.toString()}
+                // keyExtractor={(item, index) => index.toString()}
                 showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}  
+                showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
                     <>
                         <View style={styles.homeCon}>
@@ -63,24 +91,36 @@ function HomeScreen({ navigation }) {
                             />
                         </View>
                         {/* Static Content */}
-                        <View style={styles.popularEventsCon}>
+
+                        { (Object.keys(banners).length <= 0 || 
+                        (banners.events?.length <= 0  && banners.promotions?.length <= 0 )) &&
+                            <View style={styles.noEventsCon} >
+                                <Text style={styles.noEvents}>No Events or Banners Avaliable </Text>
+                            </View>
+                        } 
+
+                        {banners.events?.length > 0 && <View style={styles.popularEventsCon}>
                             <Text style={styles.popularEventshead}>Events</Text>
                         </View>
+                        }
 
                         {/* Coursole */}
-                        <View style={styles.coursoleCon}>
-                            <Coursole />
+                        {banners.events?.length > 0 && <View style={styles.coursoleCon}>
+                            <Coursole DATA={banners.events} baseUrl={baseUrl} />
                         </View>
+                        }
 
                         {/* More Static Content */}
-                        <View style={styles.popularEventsCon}>
+                        {banners.promotions?.length > 0 && <View style={styles.popularEventsCon}>
                             <Text style={styles.popularEventshead}>Promotions</Text>
                         </View>
+                        }
 
                         {/* Events FlatList */}
-                        <View style={{ flex: 1, marginHorizontal: '5%' }}>
-                            <EventsFlatlist data={dummydata} />
+                        {banners.promotions?.length > 0 && <View style={{ flex: 1, marginHorizontal: '5%' }}>
+                            <EventsFlatlist data={banners.promotions} baseUrl={baseUrl} />
                         </View>
+                        }
                     </>
                 }
             />
@@ -145,5 +185,16 @@ const styles = StyleSheet.create({
     popularEventshead: {
         fontSize: 16,
         fontWeight: '600'
+    },
+    noEventsCon: {
+        // flex:1,
+        paddingVertical: '15%',
+    },
+    noEvents: {
+        textAlign: 'center',
+        fontSize: 18,
+        fontWeight: '700',
+        fontFamily: 'Manrope-semiBold',
+        color: colors.formLable
     },
 })

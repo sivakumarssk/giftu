@@ -1,30 +1,65 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { FlatList, View, StyleSheet, Dimensions, Text, TouchableOpacity, Image } from 'react-native';
+import { FlatList, View, StyleSheet, Dimensions, Text, TouchableOpacity, Image, Linking } from 'react-native';
+import PressableItem from '../utills/PressableItem';
 
-const DATA = [
-    { id: '1', title: 'Item 1', image: require('../../assets/createEvents/birthday.jpeg') },
-    { id: '2', title: 'Item 2', image: require('../../assets/createEvents/fathersday.jpeg') },
-    { id: '3', title: 'Item 3', image: require('../../assets/createEvents/mothersday.jpeg') },
-    //   { id: '4', title: 'Item 4',image:require('../../assets/createEvents/') },
-    //   { id: '5', title: 'Item 5',image:require('../../assets/createEvents/') },
-];
 
 const windowWidth = Dimensions.get('window').width;
 
-const Coursole = () => {
+const Coursole = ({ DATA,baseUrl }) => {
+
+    // console.log('Data',DATA);
+    
     const flatListRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Auto scroll every 3 seconds
+
+    const handleImageClick = (url = '') => {
+        if (url) {
+            Linking.openURL(url)
+        }
+    }
+
+
+
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentIndex((prevIndex) =>
-                prevIndex === DATA.length - 1 ? 0 : prevIndex + 1
+                prevIndex === DATA?.length - 1 ? 0 : prevIndex + 1
             );
-        }, 3000); // Auto scroll interval
+        }, 10000); // Auto scroll interval
 
         return () => clearInterval(interval); // Clear interval on component unmount
     }, []);
+
+   
+
+    const handleArrowPress = (direction) => {
+        if (direction === 'left') {
+            setCurrentIndex((prevIndex) =>
+                prevIndex === 0 ? DATA?.length - 1 : prevIndex - 1
+            );
+        } else {
+            setCurrentIndex((prevIndex) =>
+                prevIndex === DATA?.length - 1 ? 0 : prevIndex + 1
+            );
+        }
+    };
+
+    const renderItem = ({ item }) => (
+        <View style={styles.item}>
+            {/* {console.log(`${baseUrl}${item.image}`) } */}
+            {/* <View style={styles.courImgCon}> */}
+            <PressableItem externalFunction={()=>handleImageClick(item.link)} >
+                <View style={styles.courImgCon}>
+                <Image source={{uri:`${baseUrl}${item.image}`}} style={styles.courImg}
+                    resizeMode='stretch' />
+                </View>
+            </PressableItem>
+
+            {/* </View> */}
+        </View>
+    );
+
 
     useEffect(() => {
         flatListRef.current?.scrollToIndex({
@@ -32,27 +67,6 @@ const Coursole = () => {
             animated: true,
         });
     }, [currentIndex]);
-
-    const handleArrowPress = (direction) => {
-        if (direction === 'left') {
-            setCurrentIndex((prevIndex) =>
-                prevIndex === 0 ? DATA.length - 1 : prevIndex - 1
-            );
-        } else {
-            setCurrentIndex((prevIndex) =>
-                prevIndex === DATA.length - 1 ? 0 : prevIndex + 1
-            );
-        }
-    };
-
-    const renderItem = ({ item }) => (
-        <View style={styles.item}>
-            {/* <View style={styles.courImgCon}> */}
-                <Image source={item.image} style={styles.courImg}
-                    resizeMode='stretch' />
-            {/* </View> */}
-        </View>
-    );
 
     return (
         <View style={styles.container}>
@@ -69,11 +83,11 @@ const Coursole = () => {
                 ref={flatListRef}
                 data={DATA}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item._id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 pagingEnabled
-                scrollEnabled={false} // Disable manual scroll to control through arrows and auto-scroll
+                scrollEnabled={true} // Disable manual scroll to control through arrows and auto-scroll
             />
 
             {/* Right Arrow Button */}
@@ -94,7 +108,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     item: {
-        width: windowWidth-50,
+        width: windowWidth - 50,
         height: 200,
         justifyContent: 'center',
         alignItems: 'center',
@@ -109,7 +123,7 @@ const styles = StyleSheet.create({
         // shadowOpacity: 0.25,
         // shadowRadius: 3.84,
         // elevation: 5,
-        overflow:'hidden',
+        overflow: 'hidden',
     },
     title: {
         fontSize: 20,
@@ -137,14 +151,14 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: 'black',
     },
-    courImgCon:{
-        width:400,
-        height:300,
+    courImgCon: {
+        width: windowWidth - 50,
+        height: 200,
     },
     courImg: {
-        width:'100%',
-        height:'100%',
-        resizeMode: 'contain'
+        width: '100%',
+        height: '100%',
+        // resizeMode: 'stretch'
     },
 });
 

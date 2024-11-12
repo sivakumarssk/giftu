@@ -6,11 +6,8 @@ import LoadingScreen from "../../components/utills/LoadingScreen";
 
 function ForgotOtp({route}) {
 
-    const phoneNo=route.params?.phoneNo
+    const phoneNo=route.params?.phone
     
-    const [isLoading,setIsLoading]=useState(false)
-
-    // console.log(phoneNo);
     
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -20,9 +17,8 @@ function ForgotOtp({route}) {
                         text={'We have sent the verification code to your Phone number'} />
 
                     <OtpInput direction={'ChangePassScreen'} phoneNo={phoneNo} 
-                    endPoint={'api/verify-otp'} setIsLoading={setIsLoading} />
+                    endPoint={'verifyOTP'} resendEndPoint={'genarateOtp'} />
 
-                    {isLoading && <LoadingScreen/>}
                 </ScrollView>
             </View>
         </TouchableWithoutFeedback>

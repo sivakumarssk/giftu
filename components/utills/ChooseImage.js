@@ -5,7 +5,8 @@ import PressableItem from "./PressableItem";
 const chooseArr = [{ id: 1, url: require('../../assets/access/camera.png'), label:'Click Picture',fromCamera:true },
 { id: 2, url: require('../../assets/access/gallery.png'), label:'Browse Gallery',fromCamera:false }]
 
-function ChooseImage({setPopUp,imagePick}) {
+function ChooseImage({setPopUp,imagePick,setPopCall}) {
+
     return (
         <Modal
             transparent={true}
@@ -16,7 +17,8 @@ function ChooseImage({setPopUp,imagePick}) {
 
                 <View style={styles.chooseCon}>
 
-                <PressableItem externalFunction={() => setPopUp(false)} extraStyles={styles.extra}>
+                <PressableItem externalFunction={() =>{setPopUp(false);
+                    setPopCall?setPopCall(false):''}} extraStyles={styles.extra}>
                                 <Text style={styles.cross}>✕</Text>
                             </PressableItem>
 

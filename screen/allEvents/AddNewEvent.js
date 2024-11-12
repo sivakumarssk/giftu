@@ -21,7 +21,7 @@ function AddNewEvent({navigation}){
                 <PressableItem extraStyles={styles.allguestCon}>
                     <Text style={styles.allguest}>View all guest’s</Text>
                 </PressableItem>
-                <InputPressable label={'Add Wish List'} icon={'chevron-down-sharp'}/>
+                
 
             </View>
                 <CustomButton direction={'EventCreated'} externalStyles={styles.extrabtn}

@@ -4,15 +4,15 @@ import EventsFlatlist from "../../components/home/EventsFlatlist";
 import { colors } from "../../components/utills/colors";
 
 
-const sections = [
-    { title: "June 2024",  data: [
-            { id: 1, Image: require('../../assets/dummt/event1.png') },
-            { id: 2, Image: require('../../assets/dummt/event2.png') }
-    ],},
-    { title: "April 2024",  data: [
-        { id: 1, Image: require('../../assets/dummt/draftEvent1.png') }
-] },
-];
+// const sections = [
+//     { title: "June 2024",  data: [
+//             { id: 1, Image: require('../../assets/dummt/event1.png') },
+//             { id: 2, Image: require('../../assets/dummt/event2.png') }
+//     ],},
+//     { title: "April 2024",  data: [
+//         { id: 1, Image: require('../../assets/dummt/draftEvent1.png') }
+// ] },
+// ];
 
 const renderSection = ({ item }) => (
     <View>

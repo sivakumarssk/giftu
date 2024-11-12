@@ -5,11 +5,10 @@ import CustomButton from "../../components/onboard/CustomButton"
 import { colors } from "../../components/utills/colors"
 import { useEffect, useState } from "react"
 import useApiCalls from "../../api/useApiCalls"
-import LoadingScreen from "../../components/utills/LoadingScreen"
 
 function ChangePassScreen({ navigation, route }) {
 
-    const token = route.params?.passwordToken
+    // const token = route.params?.passwordToken
 
     // console.log(token);
 
@@ -68,25 +67,23 @@ function ChangePassScreen({ navigation, route }) {
         if (validate()) {
             // console.log(getToken);
             const formData = { password: changePassword.password, 
-                password_confirmation: changePassword.rePassword }
-            apiCall('api/update-password', formData,token)
+                confirmPassword: changePassword.rePassword }
+            const response = await apiCall('post', 'forgotPassword' , formData)
+            if(response){
+                navigation.reset({
+                    index:0,
+                    routes:[{name:'Login'}]
+                })
+            }
         }
 
     }
 
-    useEffect(()=>{
-        if(responseData){
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Login' }],
-            });
-        }
-    },[responseData])
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.changeMainCon}>
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                     <FormHead heading={'Change Password'}
                         text={'Password must contain at least one uppercase letter, one number, one special character, and be at least 8 characters long.'} />
 
@@ -106,12 +103,11 @@ function ChangePassScreen({ navigation, route }) {
 
                         <CustomButton background={colors.primary}
                             externalStyles={styles.changebtn}
-                            externalFunction={buttonExtraFun}
+                            externalFunction={loading? '': buttonExtraFun}
                         >Change</CustomButton>
 
                     </View>
 
-                    {loading && <LoadingScreen/>}
                 </ScrollView>
             </View>
         </TouchableWithoutFeedback>

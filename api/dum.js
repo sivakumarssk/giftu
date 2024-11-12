@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import * as SecureStore from 'expo-secure-store'
 // import { removeLocal } from "../removeLocal";
 
-const baseUrl = 'https://admin.giftyu.in';
+const baseUrl = 'http://192.168.1.16:3000';
 
 
 const apiClient =axios.create({
@@ -106,12 +106,12 @@ function useApiCalls() {
                         return apiClient.request(error.config);
 
                     } catch (refreshError) {
-                        // console.log("refresh Token Error", refreshError);
-                        // alert('Session expired. Please log in Again.');
-                        // navigation.reset({
-                        //     index:0,
-                        //     routes:[{name : 'Login'}]
-                        // })
+                        console.log("refresh Token Error", refreshError);
+                        alert('Session expired. Please log in Again.');
+                        navigation.reset({
+                            index:0,
+                            routes:[{name : 'Login'}]
+                        })
                         return Promise.reject(refreshError)
                     }
                 }
@@ -170,5 +170,3 @@ function useApiCalls() {
     return { baseUrl,loading, apiError, responseData, apiCall,setApiError }
 }
 
-
-export default useApiCalls

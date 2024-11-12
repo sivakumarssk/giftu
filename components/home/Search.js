@@ -2,14 +2,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { Platform, StyleSheet, TextInput, View } from "react-native";
 import { colors } from "../utills/colors";
 import PressableItem from "../utills/PressableItem";
+import { useState } from "react";
 
-function Search({ direction,autoFocus=false }) {
+function Search({ direction,autoFocus=false,route,editable=true }) {
+
+    const [searchValue,setSearchValue]=useState('')
+    
     return (
         <View style={styles.searchCon}>
-            <PressableItem direction={direction} extraStyles={styles.searchInput}>
+            <PressableItem direction={direction ? direction:''} extraStyles={styles.searchInput}
+            route={route? route :''} >
             <TextInput placeholder="Search here..."
                     // style={styles.searchInput}
-                    editable={!direction}
+                    editable={editable}
                     autoFocus={autoFocus}
                 />
             </PressableItem>

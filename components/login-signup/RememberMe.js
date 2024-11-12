@@ -3,9 +3,9 @@ import PressableItem from "../utills/PressableItem";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../utills/colors";
+import * as SecureStore from 'expo-secure-store'
 
-function RememberMe({forgot=false}) {
-    const [checked, setChecked] = useState(true)
+function RememberMe({forgot=false,checked,setChecked}) {
 
     const iconChange = () => {
         setChecked(!checked)

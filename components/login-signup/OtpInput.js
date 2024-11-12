@@ -5,12 +5,12 @@ import { colors } from "../utills/colors";
 import ResendOtp from "./ResendOtp";
 import useApiCalls from "../../api/useApiCalls";
 
-function OtpInput({ phoneNo, setIsLoading, endPoint, direction }) {
+function OtpInput({ phoneNo,endPoint, direction,resendEndPoint }) {
 
     // console.log(userPhoneNumber);
     
     const navigation = useNavigation()
-    const { loading, apiError, setApiError, apiCall, responseData } = useApiCalls()
+    const { apiError, setApiError, apiCall } = useApiCalls()
 
     const [error,setError]=useState(false)
     const input1ref = useRef(null);
@@ -132,40 +132,29 @@ function OtpInput({ phoneNo, setIsLoading, endPoint, direction }) {
             otp: combinedString
         }
         // console.log(combinedString);
-         apiCall(endPoint, formdata)
+         const response = await apiCall('post',endPoint, formdata)
 
-        // if (response) {
-        //     // console.log(response.token);
-        //     // welcomeAsyncstorage('token',response.token)
-        //     const tokenStatus = updateToken(response.token);
-
-        //     if (tokenStatus) {
-        //         navigation.navigate(direction)
-        //     }
-
-        // }
-    }
-
-    useEffect(()=>{
-        if(responseData){
-            // console.log(responseData);
-            
-            navigation.replace(direction,{
-             passwordToken:responseData.token
-            })
+        if (response) {
+            // console.log(response.token);
+            if(endPoint ==='registerVerifyOtp'){
+                navigation.reset({
+                    index:0,
+                    routes:[{name:direction}]
+                })
+            }else {
+                navigation.replace(direction)
+            }
+                
         }
-    },[responseData])
+    }
 
 
     useEffect(() => {
         if (combinedString.length === 4) {
             handleSubmit();
+            // navigation.replace(direction)
         }
     }, [inputValue]);
-
-    useEffect(() => {
-        setIsLoading(loading)
-    }, [loading])
 
 
     useEffect(() => {
@@ -266,8 +255,8 @@ function OtpInput({ phoneNo, setIsLoading, endPoint, direction }) {
                     autoComplete="sms-otp"
                 />
             </View>
-            <ResendOtp phoneNo={phoneNo} endPoint={'api/forget-password'} setIsLoading={setIsLoading}
-            formKey={'phone'}/>
+            <ResendOtp phoneNo={phoneNo} endPoint={resendEndPoint} formKey={'phone'} 
+            setApiError={setApiError} />
         </View>
     )
 }

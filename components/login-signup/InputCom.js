@@ -90,6 +90,7 @@ const styles=StyleSheet.create({
     phoneInput:{
         paddingVertical:8,
         // backgroundColor:'yellow',
-        width:'95%'
+        width:'95%',
+        color: 'black',
     },
 })

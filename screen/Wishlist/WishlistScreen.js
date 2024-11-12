@@ -1,24 +1,38 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, Image, Text, View, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import NavBack from "../../components/utills/NavBack";
 import ColFaltlist from "../../components/utills/ColFaltlist";
 import WishlistName from "../../components/Wishlist/WishlistName";
+import useApiCalls from "../../api/useApiCalls";
+import { useFocusEffect } from "@react-navigation/native";
 
 function WishlistScreen() {
 
     const [popUp,setPopUp]=useState(false)
 
+    const [wishlist,setWishlist]=useState('')
+
+    const { loading, apiError, setApiError, apiCall } = useApiCalls()
+
+    const getWishlist =async()=>{
+        const response =await apiCall('get','getWishlist')
+
+        if(response){
+            setWishlist(response)
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            getWishlist();
+        }, [])
+    );
+
     const staticImage = { id: 0, Image: require('../../assets/wishlist/create.png'), 
         link: '', isStatic: true,tag:'Create New Wish List' };
 
-    const dummydata = [
-        { id: 1, Image: require('../../assets/dummt/w1.jpeg'), link: 'https://www.google.com/',tag:'Birthyday' },
-        { id: 2, Image: require('../../assets/dummt/w2.jpeg'), link: 'https://www.google.com/',tag:'Anniversary'  },
-        { id: 3, Image: require('../../assets/dummt/w3.jpeg'), link: 'https://www.google.com/',tag:'Engagement'  },
-    ];
-
     // Combine the static image with dynamic data
-    let combinedData = [staticImage, ...dummydata];
+    let combinedData = [staticImage, ...wishlist];
 
     return (
             // <TouchableWithoutFeedback onPress={Keyboard.dismiss()}>
@@ -31,7 +45,7 @@ function WishlistScreen() {
                 <ColFaltlist renderData={combinedData} setPopUp={setPopUp}
                 imageClickDir={'WishlistItemsScreen'}/>
             </View>
-            {popUp && <WishlistName setPopUp={setPopUp}/>}
+            {popUp && <WishlistName setPopUp={setPopUp} endPoint={'addWishlist'}/>}
         </View>
         // </TouchableWithoutFeedback>
     );

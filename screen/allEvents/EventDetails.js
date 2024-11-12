@@ -4,22 +4,17 @@ import PressableItem from "../../components/utills/PressableItem";
 import { colors } from "../../components/utills/colors";
 import Search from "../../components/home/Search";
 import GuessList from "../../components/events/GuessList";
+import useApiCalls from "../../api/useApiCalls";
 
 
+function EventDetails({route,navigation}) {
+    const userevent =route.params?.userevent
 
-const domyCon = [
-    { photo: require('../../assets/dummyCont/1.jpeg'), name: 'Hamad Al Hafeet', status: "Attending" },
-    { photo: require('../../assets/dummyCont/2.jpeg'), name: 'Hamad Al Hafeet', status: "Not Attending" },
-    { photo: require('../../assets/dummyCont/3.jpeg'), name: 'Hamad Al Hafeet', status: "May Be" },
-    { photo: require('../../assets/dummyCont/4.jpeg'), name: 'Hamad Al Hafeet', status: "Attending" },
-    { photo: require('../../assets/dummyCont/5.jpeg'), name: 'Hamad Al Hafeet', status: "Not Attending" },
-    { photo: require('../../assets/dummyCont/6.jpeg'), name: 'Hamad Al Hafeet', status: "May Be" },
-    { photo: require('../../assets/dummyCont/6.jpeg'), name: 'Hamad Al Hafeet', status: "May Be" },
-    { photo: require('../../assets/dummyCont/6.jpeg'), name: 'Hamad Al Hafeet', status: "May Be" },
-    { photo: require('../../assets/dummyCont/6.jpeg'), name: 'Hamad Al Hafeet', status: "May Be" },
-]
+    const {baseUrl} =useApiCalls()
 
-function EventDetails() {
+    // console.log(userevent,'rrhhr');
+    
+
     return (
         <View style={styles.detailsMain}>
 
@@ -30,10 +25,13 @@ function EventDetails() {
             <View style={styles.eventCon}>
                 <View style={styles.eventSubCon}>
                     <PressableItem>
-                        <ImageBackground source={require('../../assets/createEvents/birthday.jpeg')} style={styles.eventImg}>
+                        <ImageBackground source={{uri:`${baseUrl}${userevent.image}`}}
+                       resizeMode="stretch"  style={styles.eventImg}>
 
                             <View style={styles.itemEditCon}>
-                                <PressableItem route={{ dir: 'AddItemScreen', paraName: 'edit', value: true }}>
+                                <PressableItem 
+                                // route={{ dir: 'AddItemScreen', paraName: 'edit', value: true }}
+                                >
 
                                     <Image
                                         source={require('../../assets/wishlist/edititem.png')}
@@ -43,18 +41,36 @@ function EventDetails() {
                                 </PressableItem>
                             </View>
 
-                            <View style={styles.viewStyles}>
-                                <Text style={styles.text}>View Wishlist  {'>>'}</Text>
-                            </View>
+                            
                         </ImageBackground>
+                        
                     </PressableItem>
+                    
                 </View>
+                <View style={styles.viewStyles}>
+
+                    <View style={styles.nameTextCon}>
+                        <Text style={styles.eventName} numberOfLines={1}
+                        ellipsizeMode="tail"
+                        >{userevent.category}</Text>
+                    </View>
+                            <PressableItem 
+                                externalFunction={()=>navigation.navigate('EventWishlistItemsScreen',{
+                                    // wishlist:userevent.wishlist,
+                                    // wishlistName:userevent.wishlistName,
+                                    event:userevent,
+                                })}>
+
+                                <Text style={styles.text}>View Wishlist  {'>>'}</Text>
+                                </PressableItem>
+                            </View>
             </View>
 
             <View style={styles.addGuestCon}>
                 <Text style={styles.inviteText}>Guest’s Invited</Text>
 
-                <PressableItem direction={'AddItemScreen'}>
+                <PressableItem route={{dir:'SendInviteScreen',paraName:"addGuest",value:true}}
+                route2={{paraName:"eventId",value:userevent._id}}>
                     <View style={styles.addItemCon}>
                         <Text style={styles.addItemText}>Add Guest</Text>
                         <Image source={require('../../assets/wishlist/plus.png')}
@@ -68,9 +84,9 @@ function EventDetails() {
             </View>
 
             <View style={styles.eventListCon}>
-                <FlatList data={domyCon}
+                <FlatList data={userevent.guestList}
                     renderItem={(itemData) => 
-                        <GuessList image={itemData.item.photo} name={itemData.item.name} 
+                        <GuessList image={{uri:(`${baseUrl}${itemData.item.profilePic}`)}} name={itemData.item.contactName} 
                         status={itemData.item.status}/>
                     }
                     keyExtractor={(item, index) => index.toString()}
@@ -94,14 +110,7 @@ const styles = StyleSheet.create({
     eventCon: {
         marginVertical: 20,
         justifyContent: 'center',
-        alignItems: 'center'
-    },
-    eventSubCon: {
-        position: 'relative',
-        marginTop: 10,
-        width: '100%',
-        height: 170,
-        borderRadius: 8,
+        borderRadius:8,
         elevation: 4,
         shadowColor: 'black',
         shadowOpacity: 0.25,
@@ -109,21 +118,52 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         backgroundColor: 'white',
         overflow: 'hidden'
+        // alignItems: 'center'
+    },
+    eventSubCon: {
+        position: 'relative',
+        // marginTop: 10,
+        width: '100%',
+        height: 170,
+        // backgroundColor:'yellow'
+        // elevation: 4,
+        // shadowColor: 'black',
+        // shadowOpacity: 0.25,
+        // shadowRadius: 8,
+        // shadowOffset: { width: 0, height: 2 },
+        // backgroundColor: 'white',
+        // overflow: 'hidden'
     },
     eventImg: {
         width: '100%',
         height: '100%',
     },
     viewStyles: {
-        marginHorizontal: '10%',
-        marginVertical: '15%',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        padding:10,
+        paddingBottom:15,
+        backgroundColor:'white'
+        // marginHorizontal: '10%',
+        // marginVertical: '15%',
         // justifyContent:'center',
         // alignItems:'center'
+    },
+    nameTextCon: {
+        flexShrink: 1,
+        marginRight:8,
+    },
+    eventName:{
+        fontSize:14,
+        fontWeight:'700',
+        color:'#424242',
+        fontFamily: 'Manrope-semiBold'
     },
     text: {
         fontSize: 14,
         fontWeight: '700',
-        fontFamily: 'Manrope-semiBold'
+        fontFamily: 'Manrope-semiBold',
+        color:'#424242'
     },
     itemEditCon: {
         position: 'absolute',

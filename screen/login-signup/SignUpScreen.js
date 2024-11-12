@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
 import FormHead from "../../components/login-signup/FormHead";
 import InputCom from "../../components/login-signup/InputCom";
 import RememberMe from "../../components/login-signup/RememberMe";
@@ -10,19 +10,23 @@ import useApiCalls from "../../api/useApiCalls";
 import ImagePick from "../../components/utills/ImagePick";
 
 function SignUpScreen({ navigation }) {
-    const { apiCall, loading, apiError } = useApiCalls()
+    const { apiCall, loading, apiError, setApiError } = useApiCalls()
 
     const [registerData, setRegisterData] = useState({
+        image:'',
         userName: '',
         email: '',
         phone: '',
+        location:'',
         password: ''
     })
 
     const [error, setError] = useState({
+        image:'',
         userName: '',
         email: '',
         phone: '',
+        location:'',
         password: ''
     })
 
@@ -53,6 +57,7 @@ function SignUpScreen({ navigation }) {
 
 
     const handleOnChange = (value, key) => {
+        setApiError('')
 
         setError((prev) => ({ ...prev, [key]: '' }))
 
@@ -80,7 +85,7 @@ function SignUpScreen({ navigation }) {
         }
 
         if (key === 'password') {
-            if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
+            if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@$#!%*?&]{8,}$/.test(value)) {
                 setError((prev) => ({ ...prev, [key]: 'Password is not strong' }));
             } else if (!value) {
                 setError((prev) => ({ ...prev, [key]: 'Enter a Valid Password' }));
@@ -106,25 +111,30 @@ function SignUpScreen({ navigation }) {
     }
 
 
+    // console.log(registerData.image);
     const buttonExtraFun = async () => {
         if (validate() && Object.values(error).every(error => !error)) {
             const formData = new FormData();
 
-            formData.append('name', registerData.userName);
+            
+
+            formData.append("image", registerData.image)
+            formData.append('userName', registerData.userName);
             formData.append('email', registerData.email);
             formData.append('phone', registerData.phone);
+            formData.append('location', registerData.location);
             formData.append('password', registerData.password);
 
             // console.log(formData);
-            try {
-                const response = await apiCall('api/register', formData, '');
+
+                const response = await apiCall('post','register', formData);
+
                 if (response) {
                     // console.log(response, 'API hit successfully');
-                    navigation.navigate('OtpVerify');
+                    navigation.navigate('OtpVerify',{
+                        phone:registerData.phone
+                    });
                 }
-            } catch (error) {
-                console.error('Error:', error);
-            }
         }
     };
 
@@ -145,12 +155,17 @@ function SignUpScreen({ navigation }) {
 
                     <View style={styles.signupinput}>
 
-                        <ImagePick />
+                        <ImagePick image={registerData.image} 
+                        setImage={(data)=>{setRegisterData((prev)=>({...prev,image:data}))}} 
+                        error={error.image}
+                        setError={(err)=>{setError((prev)=>({...prev,image:err}))}} 
+                        setApiError={setApiError}
+                        />
 
                         <InputCom label={'User Name'} placeholder={'Enter UserName - Max 6 Characters'}
                             value={registerData.userName}
                             onChangeText={(value) => handleOnChange(value, 'userName')}
-                            maxLength={6} error={error.userName} />
+                            maxLength={7} error={error.userName} />
 
                         <InputCom label={'Email'} placeholder={'Enter Email Address'}
                             value={registerData.email}
@@ -166,19 +181,20 @@ function SignUpScreen({ navigation }) {
                         />
 
                         <InputCom label={'Location'}
-                            placeholder={'Enter Location'} />
+                            placeholder={'Enter Location'}
+                            value={registerData.location}
+                            onChangeText={(value)=>handleOnChange(value,'location')} 
+                            error={error.location}/>
 
                         <InputCom label={'Password'} placeholder={'Enter New Password'}
                             icon={true} value={registerData.password}
                             onChangeText={(value) => { handleOnChange(value, 'password') }}
                             error={error.password} />
-
-                        <RememberMe />
                     </View>
 
                     <View style={styles.signUpBtn}>
 
-                        <CustomButton externalFunction={buttonExtraFun}
+                        <CustomButton externalFunction={loading ? '': buttonExtraFun}
                             background={colors.primary}>Sign Up</CustomButton>
 
                         <AlredyAccount direction={'Login'}

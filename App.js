@@ -28,7 +28,6 @@ import AddItemScreen from './screen/Wishlist/AddItemScreen';
 import CreateEventsScreen from './screen/allEvents/CreateEventsScreen';
 import NewEventScreen from './screen/allEvents/NewEventScreen';
 import AddNewEvent from './screen/allEvents/AddNewEvent';
-import ContactInvitation from './components/events/ContactInvitation';
 import EventCreated from './screen/allEvents/EventCreated';
 import EventDetails from './screen/allEvents/EventDetails';
 import InvitationWishlist from './screen/invitations/InvitationWishlist';
@@ -40,6 +39,9 @@ import ChangePassword from './screen/profile/ChangePassword.js';
 import EditProfile from './screen/profile/EditProfile.js';
 import Coursole from './components/home/Coursole.js';
 import NotifiCation from './screen/notification/NotifiCation.js';
+import EventWishlistItemsScreen from './screen/allEvents/EventWishlistItemsScreen.js';
+import SendInviteScreen from './screen/allEvents/SendInviteScreen.js';
+import InvitationEventDetials from './screen/invitations/InvitationEventDetials.js';
 
 
 const Stack = createNativeStackNavigator();
@@ -50,7 +52,7 @@ function BottomNavigation() {
   return (
     <Bottom.Navigator screenOptions={({ route }) => ({
       tabBarHideOnKeyboard: true,
-      tabBarItemStyle: { padding: 8 },
+      tabBarItemStyle: { padding: 8,paddingVertical:15 },
       tabBarStyle: styles.tabBar,
       tabBarLabelStyle: styles.tabBarLabel,
       tabBarIcon: ({ focused, color, size }) => {
@@ -178,12 +180,12 @@ export default function App() {
               <Stack.Screen name='AddNewEvent' component={AddNewEvent} options={defaultOptions} />
               <Stack.Screen name='EventCreated' component={EventCreated} options={defaultOptions} />
               <Stack.Screen name='EventDetails' component={EventDetails} options={defaultOptions} />
-
-              <Stack.Screen name='ContactInvitation' component={ContactInvitation} options={defaultOptions} />
+              <Stack.Screen name='EventWishlistItemsScreen' component={EventWishlistItemsScreen} options={defaultOptions}/>
+              <Stack.Screen name='SendInviteScreen' component={SendInviteScreen} options={defaultOptions}/>
 
               {/* invitation */}
               <Stack.Screen name='InvitationWishlist' component={InvitationWishlist} options={defaultOptions} />
-
+              <Stack.Screen name='InvitationEventDetials' component={InvitationEventDetials} options={defaultOptions}/>
               {/* profile */}
               <Stack.Screen name='EditProfile' component={EditProfile} options={defaultOptions}/>
               <Stack.Screen name='ChangePassword' component={ChangePassword} options={defaultOptions}/>
@@ -213,7 +215,8 @@ const styles = StyleSheet.create({
     // borderColor:'black',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    height: 60,
+    height: 75,
+    alignItems:'center',
     elevation: 10,
     shadowColor: 'black',
     shadowOpacity: 1,

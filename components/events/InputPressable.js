@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
 
 
-function InputPressable({ extraFunction,label,icon }) {
+function InputPressable({ extraFunction,label,icon,value,error }) {
     return (
         <View>
             <Text style={styles.label}>{label}</Text>
@@ -12,12 +12,14 @@ function InputPressable({ extraFunction,label,icon }) {
                         <TextInput
                             style={styles.input}
                             editable={false} // Disable editing
+                            value={value}
                         />
                     </View>
 
                     <Ionicons name={icon} size={24}/>
                 </Pressable>
             </View>
+            {error && <Text style={{color:'red'}}>{error}</Text>}
         </View>
     )
 }

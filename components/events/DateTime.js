@@ -1,17 +1,33 @@
 import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-function DateTime({mode,value,setShow}){
+function DateTime({ mode, value, setShow, setDate, onChange }) {
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        console.log(currentDate);
-        setShow(false)
-      };
+  const handleChange = (event, selectedDate) => {
+    if (event.type === "dismissed") {
+      setShow(false); 
+      // onChange(null, mode);
+    } else {
+      const currentDate = selectedDate;
+      setShow(false);
+      onChange(currentDate, mode);
+    } 
 
-    return(
-        <View>
-             {/* Modal for iOS to replicate the Android-like popup behavior */}
+    // if (Platform.OS === 'android') {
+    // setShow(false); 
+    // }
+  };
+
+  const getISTDate = () => {
+    const now = new Date();
+    const utcOffset = now.getTimezoneOffset() * 60000;
+    const istOffset = 19800000; // IST is UTC+5:30
+    return new Date(now.getTime() + utcOffset + istOffset);
+  };
+
+  return (
+    <View>
+      {/* Modal for iOS to replicate the Android-like popup behavior */}
       {Platform.OS === 'ios' && (
         <Modal
           transparent={true}
@@ -27,11 +43,12 @@ function DateTime({mode,value,setShow}){
           }}>
             <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
               <DateTimePicker
-                value={value}
+                value={value || getISTDate()}
                 mode={mode}
                 display="spinner"
-                onChange={onChange}
-                textColor="black" 
+                onChange={handleChange}
+                minimumDate={getISTDate()}
+                textColor="black"
                 style={{ backgroundColor: 'white' }}
               />
 
@@ -47,15 +64,16 @@ function DateTime({mode,value,setShow}){
       {/* For Android, show DateTimePicker directly */}
       {Platform.OS === 'android' && (
         <DateTimePicker
-          value={value}
+          value={value || getISTDate()}
           mode={mode}
           display="default"
-          onChange={onChange}
+          minimumDate={getISTDate()}
+          onChange={handleChange}
         />
       )}
 
-        </View>
-    )
+    </View>
+  )
 }
 
 export default DateTime

@@ -1,4 +1,4 @@
-import { Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import FormHead from "../../components/login-signup/FormHead";
 import RememberMe from "../../components/login-signup/RememberMe";
 import CustomButton from "../../components/onboard/CustomButton";
@@ -7,20 +7,35 @@ import AlredyAccount from "../../components/login-signup/AlredyAccount";
 import InputCom from "../../components/login-signup/InputCom";
 import React, { useCallback, useEffect, useState } from "react";
 import useApiCalls from "../../api/useApiCalls";
-import { useDispatch } from "react-redux";
-import { updateToken } from "../../redux/slice/TempData";
-import welcomeAsyncstorage from "../../components/storage/welcomeAsyncstorage";
-import LoadingScreen from "../../components/utills/LoadingScreen";
+import * as SecureStore from 'expo-secure-store'
+
+// const removeToken =async () =>{
+//     await SecureStore.deleteItemAsync('accessToken')
+//     await SecureStore.deleteItemAsync('refreshToken')
+// }
 
 function Login({ navigation }) {
 
-    const [loginForm, setLoginForm] = useState({ phoneNumber: null, password: null })
+    const [loginForm, setLoginForm] = useState({ phoneNumber: '', password: '' })
     const [errors, setErrors] = useState({ phoneNumber: null, password: null })
-    const { loading, apiError, apiCall, setApiError, responseData } = useApiCalls()
+    const { loading, apiError, apiCall, setApiError } = useApiCalls()
 
-    const dispatch=useDispatch()
+    const [checked, setChecked] = useState(true)
 
+    useEffect(() => {
+        const loadSecureStoreData = async () => {
+        // await removeToken()
 
+            const phoneNumber = await SecureStore.getItemAsync('localphone');
+            const password = await SecureStore.getItemAsync('localpass');
+            setLoginForm({ phoneNumber: phoneNumber || '', password: password || '' });
+        };
+        loadSecureStoreData();
+
+    }, []);
+
+    // console.log(loginForm);
+    
     const validate = () => {
 
         const validateErrors = { phoneNumber: '', password: '' }
@@ -61,39 +76,37 @@ function Login({ navigation }) {
             }
         }
         if (field === 'password') {
-            const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@$#!%*?&]{8,}$/;
             if (value && !passwordRegex.test(value)) {
                 setErrors((prev) => ({ ...prev, password: 'Password is not strong' }))
             }
         }
     }
 
-    useEffect(() => {
-     console.log('outter');
-     
-        if (responseData) {
-            console.log('inner');
-            dispatch(updateToken(responseData.token))
-            welcomeAsyncstorage('token',responseData.token)
-            // if (tokenStatus) {
-            navigation.replace('HomeScreen')
-            // }
-        }
-    }, [responseData,navigation])
 
-
-    const hanlesubmit = () => {
+    const hanlesubmit = async() => {
         if (validate()) {
             const formdata = {
                 phone: loginForm.phoneNumber,
                 password: loginForm.password
             };
 
-            apiCall('api/login', formdata)
+            const response=await apiCall('post','login', formdata)
+
+            if (response) {            
+                // console.log('inner');
+                navigation.replace('HomeScreen')
+                if(checked){
+                    await SecureStore.setItemAsync('localphone',loginForm.phoneNumber)
+                    await SecureStore.setItemAsync('localpass',loginForm.password)
+                }
+            }
 
         }
 
     }
+
+    
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -130,17 +143,16 @@ function Login({ navigation }) {
                             onChangeText={(value)=>handleOnChange(value,'password')}
                             error={errors.password}
                         />
-                        <RememberMe forgot={true} />
+                        <RememberMe forgot={true} checked={checked} setChecked={setChecked} />
                     </View>
 
                     <View style={styles.loginButton}>
-                        <CustomButton background={colors.primary} externalFunction={hanlesubmit}
+                        <CustomButton background={colors.primary} externalFunction={loading? '': hanlesubmit}
                         >Log in</CustomButton>
 
                         <AlredyAccount clickText={' Create Account'} direction={'SignUpScreen'}
                         >Don’t have an account? </AlredyAccount>
                     </View>
-                    {loading && <LoadingScreen/>}
                 </ScrollView>
             </View>
         </TouchableWithoutFeedback>

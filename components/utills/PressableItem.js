@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Pressable, Text, View } from "react-native";
 
-function PressableItem({ children, direction, skipNav, externalFunction, extraStyles,route }) {
+function PressableItem({ children, direction, skipNav, externalFunction, extraStyles,route,route2 }) {
 
     const navigation = useNavigation()
     const handleonPress = () => {
@@ -14,7 +14,8 @@ function PressableItem({ children, direction, skipNav, externalFunction, extraSt
         }
         if(route){
             navigation.navigate(route.dir,{
-                [route.paraName]:route.value
+                [route.paraName]:route.value,
+                [route2?.paraName]:route2?.value
             })
         }
         if (skipNav) {

@@ -230,6 +230,7 @@ function NewEventScreen({ route,navigation }) {
                             {selectShow && <ScrollView style={styles.selectmenu} nestedScrollEnabled={true}>
 
                                 {
+<<<<<<< HEAD
                                     wishlistName.map((each, index) => {
                                         // console.log(index);
 
@@ -245,6 +246,23 @@ function NewEventScreen({ route,navigation }) {
                                                     <Text style={styles.optionText}>{each.name}</Text>
                                                 </PressableItem>
                                                 {(index < wishlistName.length - 1) && <View style={styles.selectOptionline}></View>}
+=======
+                                    wishlistName?.map((each, index) => {
+                                        // console.log(index);
+
+                                        return (
+                                            <View key={each?._id}>
+                                                <PressableItem extraStyles={styles.selectOption}
+                                                    externalFunction={() => {
+                                                        setError((prev) => ({ ...prev, wishlistName: '' }))
+                                                        setEventForm((prev) => ({ ...prev, wishlistName: each?.name }))
+                                                        setSelectShow(false);
+                                                    }}
+                                                >
+                                                    <Text style={styles.optionText}>{each?.name}</Text>
+                                                </PressableItem>
+                                                {(index < wishlistName?.length - 1) && <View style={styles.selectOptionline}></View>}
+>>>>>>> 13d87f0 (Describe)
                                             </View>
                                         )
 

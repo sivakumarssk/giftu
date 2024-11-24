@@ -90,7 +90,11 @@ function EditProfile({ route, navigation }) {
     const handleOnBlur = (key) => {
         if (key === 'email') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+<<<<<<< HEAD
             if (!emailRegex.test(registerData.email)) {
+=======
+            if (!emailRegex.test(updateData.email)) {
+>>>>>>> 13d87f0 (Describe)
                 setError((prev) => ({ ...prev, [key]: 'Enter a Valid Email' }));
             }
         }
@@ -98,7 +102,10 @@ function EditProfile({ route, navigation }) {
     }
 
 
+<<<<<<< HEAD
     // console.log(registerData.image);
+=======
+>>>>>>> 13d87f0 (Describe)
     const buttonExtraFun = async () => {
         if (validate() && Object.values(error).every(error => !error)) {
             const formData = new FormData();

@@ -45,11 +45,7 @@ function useApiCalls() {
                 const {accessToken,refreshToken} = response.data
                 await saveToken('accessToken',accessToken)
                 await saveToken('refreshToken',refreshToken)
-<<<<<<< HEAD
-                console.log(accessToken,'access');
-=======
                 // console.log(accessToken,'access');
->>>>>>> 13d87f0 (Describe)
                 
                 return accessToken
             }
@@ -80,11 +76,7 @@ function useApiCalls() {
                 return config
             },
             (error)=>{
-<<<<<<< HEAD
-                console.log('request',error);
-=======
                 // console.log('request',error);
->>>>>>> 13d87f0 (Describe)
                 return Promise.reject(error)
             }
         );

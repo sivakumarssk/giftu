@@ -90,11 +90,7 @@ function EditProfile({ route, navigation }) {
     const handleOnBlur = (key) => {
         if (key === 'email') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-<<<<<<< HEAD
             if (!emailRegex.test(registerData.email)) {
-=======
-            if (!emailRegex.test(updateData.email)) {
->>>>>>> 13d87f0 (Describe)
                 setError((prev) => ({ ...prev, [key]: 'Enter a Valid Email' }));
             }
         }
@@ -102,102 +98,98 @@ function EditProfile({ route, navigation }) {
     }
 
 
-<<<<<<< HEAD
     // console.log(registerData.image);
-=======
->>>>>>> 13d87f0 (Describe)
-    const buttonExtraFun = async () => {
-        if (validate() && Object.values(error).every(error => !error)) {
-            const formData = new FormData();
+    const buttonExtraFun = async() => {
+        const formData = new FormData();
 
 
-            formData.append('userName', updateData.userName);
-            formData.append('email', updateData.email);
-            formData.append('location', updateData.location);
-            formData.append('password', updateData.password);
+        formData.append('userName', updateData.userName);
+        formData.append('email', updateData.email);
+        formData.append('location', updateData.location);
+        formData.append('password', updateData.password);
 
-            // console.log(formData);
+        // console.log(formData);
 
-            const response = await apiCall('patch', `updateUser/${profile._id}`, formData);
+        const response = await apiCall('patch', `updateUser/${profile._id}`, formData);
 
-            if (response) {
-                // console.log(response, 'API hit successfully');
-                navigation.goBack();
-            }
+        if (response) {
+            // console.log(response, 'API hit successfully');
+            navigation.goBack();
         }
-    };
-
-    return (
-        <View style={styles.editCon}>
-            <NavBack >Edit Profile</NavBack>
-
-            <KeyboardAvoidingView style={{ flex: 1 }}>
-
-                <ScrollView showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={{ flexGrow: 1 }}>
-
-                    <View style={styles.signupinput}>
-
-                        {apiError && <View style={{ marginTop: 15 }}><Text style={{ textAlign: 'center', color: 'red' }}>{apiError}</Text></View>}
+    }
 
 
-                        <InputCom label={'User Name'}
-                            placeholder={'Enter UserName - Max 6 Characters'}
-                            value={updateData.userName}
-                            onChangeText={(value) => handleOnChange(value, 'userName')}
-                            maxLength={7}
-                            error={error.userName}
-                            editable={edit} />
+return (
+    <View style={styles.editCon}>
+        <NavBack >Edit Profile</NavBack>
 
-                        <InputCom label={'Email'} placeholder={'Enter Email Address'}
-                            value={updateData.email}
-                            onChangeText={(value) => handleOnChange(value, 'email')}
-                            onBlur={() => handleOnBlur('email')}
-                            error={error.email}
-                            editable={edit}
-                        />
+        <KeyboardAvoidingView style={{ flex: 1 }}>
 
-                        {/* <InputCom label={'Phone number'} placeholder={'Enter Phone Number'}
+            <ScrollView showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ flexGrow: 1 }}>
+
+                <View style={styles.signupinput}>
+
+                    {apiError && <View style={{ marginTop: 15 }}><Text style={{ textAlign: 'center', color: 'red' }}>{apiError}</Text></View>}
+
+
+                    <InputCom label={'User Name'}
+                        placeholder={'Enter UserName - Max 6 Characters'}
+                        value={updateData.userName}
+                        onChangeText={(value) => handleOnChange(value, 'userName')}
+                        maxLength={7}
+                        error={error.userName}
+                        editable={edit} />
+
+                    <InputCom label={'Email'} placeholder={'Enter Email Address'}
+                        value={updateData.email}
+                        onChangeText={(value) => handleOnChange(value, 'email')}
+                        onBlur={() => handleOnBlur('email')}
+                        error={error.email}
+                        editable={edit}
+                    />
+
+                    {/* <InputCom label={'Phone number'} placeholder={'Enter Phone Number'}
                             phone={true}
                             keyboardType={'number-pad'}
                             maxLength={10}
                         /> */}
 
-                        <InputCom label={'Location'}
-                            placeholder={'Enter Location'}
-                            value={updateData.location}
-                            onChangeText={(value) => handleOnChange(value, 'location')}
-                            error={error.location}
-                            editable={edit}
-                        />
+                    <InputCom label={'Location'}
+                        placeholder={'Enter Location'}
+                        value={updateData.location}
+                        onChangeText={(value) => handleOnChange(value, 'location')}
+                        error={error.location}
+                        editable={edit}
+                    />
 
-                        {edit && <InputCom
-                            icon={true}
-                            placeholder={'Enter Password'}
-                            label={'Password'}
-                            value={updateData.password}
-                            onChangeText={(value) => handleOnChange(value, 'password')}
-                            error={error.password}
-                        />
+                    {edit && <InputCom
+                        icon={true}
+                        placeholder={'Enter Password'}
+                        label={'Password'}
+                        value={updateData.password}
+                        onChangeText={(value) => handleOnChange(value, 'password')}
+                        error={error.password}
+                    />
 
-                        }
-                        <CustomButton externalStyles={styles.btnsty}
-                            externalFunction={loading ? '' :
-                                edit ? buttonExtraFun : () => setEdit(true)}>
-                            {edit ? 'Save Changes' : 'Edit'}</CustomButton>
+                    }
+                    <CustomButton externalStyles={styles.btnsty}
+                        externalFunction={loading ? '' :
+                            edit ? buttonExtraFun : () => setEdit(true)}>
+                        {edit ? 'Save Changes' : 'Edit'}</CustomButton>
 
-                    </View>
+                </View>
 
-                    <View>
-                        {edit && <CustomButton background="transparent" color="blue"
-                            externalFunction={loading ? '' : ''}
-                        >Change PhoneNumber</CustomButton>}
-                    </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </View>
-    )
+                <View>
+                    {edit && <CustomButton background="transparent" color="blue"
+                        externalFunction={loading ? '' : ''}
+                    >Change PhoneNumber</CustomButton>}
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
+    </View>
+)
 }
 
 export default EditProfile
